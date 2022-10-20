@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+<bean id="performanceTraceAdvice" class="glory.spring.common.ProfilingAdvice"></bean>
+
+<aop:config>
+	<aop:aspect id="traceAspect1" ref="performanceTraceAdvice">
+		<aop:pointcut expression="execution(public * glory.spring.board.service..*(..))" id="publicMethod"/>
+		<aop:around pointcut-ref="publicMethod" method="trace"/>
+	</aop:aspect>
+	<aop:aspect id="traceAspect2" ref="performanceTraceAdvice">
+		<aop:around pointcut="execution(public * glory.spring.member.service..*(..))" method="trace"/>
+	</aop:aspect>
+
+</aop:config>
+
+
+<bean id="writeArticleService" class="glory.spring.board.service.WriteArticleServiceImpl">
+	<constructor-arg><ref bean="articleDAO"/></constructor-arg>
+</bean>
+<bean id="articleDAO" class="glory.spring.board.dao.OracleArticleDAO"/>
+<bean id="memberService" class="glory.spring.member.service.MemberServiceImpl"/>
+
+
+</beans>
